@@ -1,0 +1,15 @@
+apiVersion: skaffold/v4beta11
+kind: Config
+metadata:
+  name: switchbot-middleware
+build:
+  tagPolicy:
+    gitCommit: {}
+  artifacts:
+    - image: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware
+      context: app
+      buildpacks:
+        builder: gcr.io/buildpacks/builder:v1
+manifests:
+  rawYaml:
+    - manifests/deploy.yaml

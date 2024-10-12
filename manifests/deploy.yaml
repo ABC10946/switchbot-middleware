@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: switchbot-middleware
+  name: switchbot-middleware
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: switchbot-middleware
+  template:
+    metadata:
+      labels:
+        app: switchbot-middleware
+    spec:
+      containers:
+      - image: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware:0.0.1
+        name: switchbot-middleware
+        command: ["sh", "-c", "./main && sleep 80000"]
