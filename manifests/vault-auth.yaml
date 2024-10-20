@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: switchbot-middleware-vault-sa
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: switchbot-middleware-vault-auth
+spec:
+  method: kubernetes
+  mount: abcke
+  kubernetes:
+    role: switchbot-middleware
+    serviceAccount: switchbot-middleware-vault-sa

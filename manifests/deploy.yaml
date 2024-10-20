@@ -5,7 +5,7 @@ metadata:
     app: switchbot-middleware
   name: switchbot-middleware
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: switchbot-middleware
@@ -15,6 +15,16 @@ spec:
         app: switchbot-middleware
     spec:
       containers:
-      - image: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware:0.0.1
+      - image: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware
         name: switchbot-middleware
-        command: ["sh", "-c", "./main && sleep 80000"]
+        env:
+        - name: SWITCHBOT_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: switchbot-middleware-kv
+              key: CLIENT_SECRET
+        - name: SWITCHBOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: switchbot-middleware-kv
+              key: TOKEN
