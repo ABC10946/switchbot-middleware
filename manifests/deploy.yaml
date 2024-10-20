@@ -17,6 +17,8 @@ spec:
       containers:
       - image: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware
         name: switchbot-middleware
+        ports:
+        - containerPort: 8080
         env:
         - name: SWITCHBOT_CLIENT_SECRET
           valueFrom:

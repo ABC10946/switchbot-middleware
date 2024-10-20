@@ -13,3 +13,6 @@ build:
 manifests:
   rawYaml:
     - manifests/deploy.yaml
+    - manifests/ingress.yaml
+    - manifests/vault-auth.yaml
+    - manifests/vaultstaticsecret.yaml

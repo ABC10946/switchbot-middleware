@@ -14,19 +14,67 @@ import (
 	"io"
 
 	"github.com/google/uuid"
+	"github.com/labstack/echo"
 )
 
 func main() {
 
-	deviceId := "01-202304012328-87495896"
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, world!")
+	})
 
-	// turn on switchbot color bulb
-	apiHeader := makeAPIHeader()
-	SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+	e.GET("/turnon", func(c echo.Context) error {
+		deviceId := "01-202304012328-87495896"
 
-	// turn off switchbot color bulb
-	apiHeader = makeAPIHeader()
-	SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+		// turn on switchbot color bulb
+		apiHeader := makeAPIHeader()
+		SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+
+		return c.String(http.StatusOK, "Turn on switchbot bulb")
+	})
+
+	e.GET("/turnoff", func(c echo.Context) error {
+		deviceId := "01-202304012328-87495896"
+
+		// turn off switchbot color bulb
+		apiHeader := makeAPIHeader()
+		SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+
+		return c.String(http.StatusOK, "Turn off switchbot bulb")
+	})
+
+	toggle := false
+
+	e.GET("/toggle", func(c echo.Context) error {
+		deviceId := "01-202304012328-87495896"
+		apiHeader := makeAPIHeader()
+
+		if toggle {
+			toggle = false
+			SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+		} else {
+			toggle = true
+			SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+		}
+
+		return c.String(http.StatusOK, "Toggle switchbot bulb")
+	})
+
+	e.Logger.Fatal(e.Start(":8080"))
+
+	/*
+
+		deviceId := "01-202304012328-87495896"
+
+		// turn on switchbot color bulb
+		apiHeader := makeAPIHeader()
+		SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+
+		// turn off switchbot color bulb
+		apiHeader = makeAPIHeader()
+		SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+	*/
 }
 
 func makeAPIHeader() map[string]string {
