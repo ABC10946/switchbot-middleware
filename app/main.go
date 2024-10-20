@@ -17,6 +17,19 @@ import (
 )
 
 func main() {
+
+	deviceId := "01-202304012328-87495896"
+
+	// turn on switchbot color bulb
+	apiHeader := makeAPIHeader()
+	SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+
+	// turn off switchbot color bulb
+	apiHeader = makeAPIHeader()
+	SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+}
+
+func makeAPIHeader() map[string]string {
 	// Declare empty header map
 	apiHeader := make(map[string]string)
 
@@ -50,54 +63,15 @@ func main() {
 	apiHeader["sign"] = sign
 	apiHeader["nonce"] = nonce.String()
 
-	// request switchbot api with api header
+	return apiHeader
+}
 
-	/*
-
-		req, err := http.NewRequest("GET", "https://api.switch-bot.com/v1.1/devices", nil)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		// Add headers to request
-		for key, value := range apiHeader {
-			req.Header.Add(key, value)
-		}
-
-		// Create http client
-		client := &http.Client{}
-
-		// Send request
-		resp, err := client.Do(req)
-
-		defer resp.Body.Close()
-
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		// Read all response body
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		// Print response body
-		fmt.Println(string(body))
-
-	*/
-
-	// turn off switchbot color bulb
-
-	// POST /v1.1/devices/{deviceId}/commands
-
-	deviceId := "01-202304012328-87495896"
-
+func SwitchBotControl(apiHeader map[string]string, deviceId string, command string, parameter string, commandType string) {
 	// Build API Request Body
 	apiRequestBody := map[string]string{
-		"command":     "turnOn",
-		"parameter":   "default",
-		"commandType": "command",
+		"command":     command,
+		"parameter":   parameter,
+		"commandType": commandType,
 	}
 
 	// convert request body to json
