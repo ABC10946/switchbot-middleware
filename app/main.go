@@ -24,7 +24,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello, world!")
 	})
 
-	e.GET("/turnon", func(c echo.Context) error {
+	e.GET("/light/turnon", func(c echo.Context) error {
 		deviceId := "01-202304012328-87495896"
 
 		// turn on switchbot color bulb
@@ -34,7 +34,7 @@ func main() {
 		return c.String(http.StatusOK, "Turn on switchbot bulb")
 	})
 
-	e.GET("/turnoff", func(c echo.Context) error {
+	e.GET("/light/turnoff", func(c echo.Context) error {
 		deviceId := "01-202304012328-87495896"
 
 		// turn off switchbot color bulb
@@ -46,7 +46,7 @@ func main() {
 
 	toggle := false
 
-	e.GET("/toggle", func(c echo.Context) error {
+	e.GET("/light/toggle", func(c echo.Context) error {
 		deviceId := "01-202304012328-87495896"
 		apiHeader := makeAPIHeader()
 
@@ -59,6 +59,36 @@ func main() {
 		}
 
 		return c.String(http.StatusOK, "Toggle switchbot bulb")
+	})
+
+	e.GET("/all/turnon", func(c echo.Context) error {
+		airConditionerId := "01-202210180121-38128280"
+		lightId := "01-202304012328-87495896"
+		deskLightId := "70041D7EEE6A"
+
+		apiHeader := makeAPIHeader()
+		SwitchBotControl(apiHeader, airConditionerId, "turnOn", "default", "command")
+		apiHeader = makeAPIHeader()
+		SwitchBotControl(apiHeader, lightId, "turnOn", "default", "command")
+		apiHeader = makeAPIHeader()
+		SwitchBotControl(apiHeader, deskLightId, "turnOn", "default", "command")
+
+		return c.String(http.StatusOK, "Turn on all devices")
+	})
+
+	e.GET("/all/turnoff", func(c echo.Context) error {
+		airConditionerId := "01-202210180121-38128280"
+		lightId := "01-202304012328-87495896"
+		deskLightId := "70041D7EEE6A"
+
+		apiHeader := makeAPIHeader()
+		SwitchBotControl(apiHeader, airConditionerId, "turnOff", "default", "command")
+		apiHeader = makeAPIHeader()
+		SwitchBotControl(apiHeader, lightId, "turnOff", "default", "command")
+		apiHeader = makeAPIHeader()
+		SwitchBotControl(apiHeader, deskLightId, "turnOff", "default", "command")
+
+		return c.String(http.StatusOK, "Turn off all devices")
 	})
 
 	e.Logger.Fatal(e.Start(":8080"))
