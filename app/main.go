@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -29,11 +30,13 @@ type SwitchBotConfigurationItem struct {
 	DeviceIds []string `yaml:"deviceIds"`
 }
 
-func main() {
-	// read switchbot configuration from yaml
-	filePath := "/app/switchbot-configuration.yaml"
+var filePath = flag.String("f", "/app/switchbot-configuration.yaml", "yaml file path")
 
-	switchbotConfiguration, err := os.ReadFile(filePath)
+func main() {
+	flag.Parse()
+	// read switchbot configuration from yaml
+
+	switchbotConfiguration, err := os.ReadFile(*filePath)
 	if err != nil {
 		panic(err)
 	}
