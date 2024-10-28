@@ -1,0 +1,74 @@
+# Default values for switchbot-middleware.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 1
+
+# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
+image:
+  repository: harbor.k8s.local/streamdeck_switchbot/switchbot-middleware
+  # This sets the pull policy for images.
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "1.1.0"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+  # This is the port the service will be exposed on
+  # port: 80
+  # This is the port the service will forward to
+  # targetPort: 8080
+
+
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: switchbot-middleware.k8s.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+switchbotconfiguration: |
+  switchbot-configuration:
+    - name: "light-turnon"
+      path: "/light/turnon"
+      type: "turnOn"
+      deviceIds:
+        - "01-202304012328-87495896"
+    - name: "light-turnoff"
+      path: "/light/turnoff"
+      type: "turnOff"
+      deviceIds:
+        - "01-202304012328-87495896"
+    - name: "light-toggle"
+      path: "/light/toggle"
+      type: "toggle"
+      deviceIds:
+        - "01-202304012328-87495896"
+    - name: allon
+      path: "/all/turnon"
+      type: "turnOn"
+      deviceIds:
+        - "01-202210180121-38128280"
+        - "01-202304012328-87495896"
+        - "70041D7EEE6A"
+    - name: alloff
+      path: "/all/turnoff"
+      type: "turnOff"
+      deviceIds:
+        - "01-202210180121-38128280"
+        - "01-202304012328-87495896"
+        - "70041D7EEE6A"
+    - name: aircon-toggle
+      path: "/aircon/toggle"
+      type: "toggle"
+      deviceIds:
+        - "01-202210180121-38128280"

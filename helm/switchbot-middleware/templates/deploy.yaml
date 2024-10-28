@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: switchbot-middleware
+  name: switchbot-middleware
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: switchbot-middleware
+  template:
+    metadata:
+      labels:
+        app: switchbot-middleware
+    spec:
+      containers:
+      - image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        name: switchbot-middleware
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/
+        env:
+        - name: SWITCHBOT_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: switchbot-middleware-kv
+              key: CLIENT_SECRET
+        - name: SWITCHBOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: switchbot-middleware-kv
+              key: TOKEN
+      volumes:
+      - name: config-volume
+        configMap:
+          name: switchbot-middleware-config

@@ -1,0 +1,34 @@
+{{- if .Values.ingress.enabled}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: switchbot-middleware-ingress
+  labels:
+    name: switchbot-middleware-ingress
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+  - host: switchbot-middleware.k8s.local
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: switchbot-middleware
+            port: 
+              number: {{ .Values.service.port }}
+{{- end}}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: switchbot-middleware
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: switchbot-middleware
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+

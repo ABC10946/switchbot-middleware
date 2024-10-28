@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switchbot-middleware-config
+data:
+  switchbot-configuration.yaml: |-
+    {{ .Values.switchbotconfiguration | nindent 4 }}
