@@ -16,3 +16,4 @@ manifests:
     - manifests/ingress.yaml
     - manifests/vault-auth.yaml
     - manifests/vaultstaticsecret.yaml
+    - manifests/configmap.yaml

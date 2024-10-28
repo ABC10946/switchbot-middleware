@@ -19,6 +19,9 @@ spec:
         name: switchbot-middleware
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/
         env:
         - name: SWITCHBOT_CLIENT_SECRET
           valueFrom:
@@ -30,3 +33,7 @@ spec:
             secretKeyRef:
               name: switchbot-middleware-kv
               key: TOKEN
+      volumes:
+        - name: config-volume
+          configMap:
+            name: switchbot-middleware-config

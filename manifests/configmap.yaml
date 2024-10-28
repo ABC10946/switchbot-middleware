@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: switchbot-middleware-config
+data:
+  switchbot-configuration.yaml: |-
+    switchbot-configuration:
+      - name: "light-turnon"
+        path: "/light/turnon"
+        type: "turnOn"
+        deviceIds:
+          - "01-202304012328-87495896"
+      - name: "light-turnoff"
+        path: "/light/turnoff"
+        type: "turnOff"
+        deviceIds:
+          - "01-202304012328-87495896"
+      - name: "light-toggle"
+        path: "/light/toggle"
+        type: "toggle"
+        deviceIds:
+          - "01-202304012328-87495896"
+      - name: allon
+        path: "/all/turnon"
+        type: "turnOn"
+        deviceIds:
+          - "01-202210180121-38128280"
+          - "01-202304012328-87495896"
+          - "70041D7EEE6A"
+      - name: alloff
+        path: "/all/turnoff"
+        type: "turnOff"
+        deviceIds:
+          - "01-202210180121-38128280"
+          - "01-202304012328-87495896"
+          - "70041D7EEE6A"
+      - name: aircon-toggle
+        path: "/aircon/toggle"
+        type: "toggle"
+        deviceIds:
+          - "01-202210180121-38128280"

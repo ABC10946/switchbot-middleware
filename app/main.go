@@ -15,96 +15,78 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo"
+	yaml "gopkg.in/yaml.v3"
 )
 
+type SwitchBotConfiguration struct {
+	SwitchBotConfiguration []SwitchBotConfigurationItem `yaml:"switchbot-configuration"`
+}
+
+type SwitchBotConfigurationItem struct {
+	Name      string   `yaml:"name"`
+	Type      string   `yaml:"type"`
+	Path      string   `yaml:"path"`
+	DeviceIds []string `yaml:"deviceIds"`
+}
+
 func main() {
+	// read switchbot configuration from yaml
+	filePath := "/app/switchbot-configuration.yaml"
+
+	switchbotConfiguration, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	t := SwitchBotConfiguration{}
+	err = yaml.Unmarshal(switchbotConfiguration, &t)
+	if err != nil {
+		panic(err)
+	}
 
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, world!")
 	})
 
-	e.GET("/light/turnon", func(c echo.Context) error {
-		deviceId := "01-202304012328-87495896"
+	var toggles map[string]bool
 
-		// turn on switchbot color bulb
-		apiHeader := makeAPIHeader()
-		SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+	for _, item := range t.SwitchBotConfiguration {
+		fmt.Println(item.Name)
+		fmt.Println(item.Type)
+		fmt.Println(item.Path)
+		fmt.Println(item.DeviceIds)
+		fmt.Println("")
+		if item.Type == "toggle" {
+			toggles = make(map[string]bool)
+			toggles[item.Name] = false
 
-		return c.String(http.StatusOK, "Turn on switchbot bulb")
-	})
-
-	e.GET("/light/turnoff", func(c echo.Context) error {
-		deviceId := "01-202304012328-87495896"
-
-		// turn off switchbot color bulb
-		apiHeader := makeAPIHeader()
-		SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
-
-		return c.String(http.StatusOK, "Turn off switchbot bulb")
-	})
-
-	toggle := false
-
-	e.GET("/light/toggle", func(c echo.Context) error {
-		deviceId := "01-202304012328-87495896"
-		apiHeader := makeAPIHeader()
-
-		if toggle {
-			toggle = false
-			SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+			e.GET(item.Path, func(c echo.Context) error {
+				for _, deviceId := range item.DeviceIds {
+					apiHeader := makeAPIHeader()
+					if toggles[item.Name] {
+						SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
+						toggles[item.Name] = false
+					} else {
+						SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+						toggles[item.Name] = true
+					}
+				}
+				fmt.Println(toggles)
+				return c.String(http.StatusOK, fmt.Sprintf("Toggle %s devices", item.Type))
+			})
 		} else {
-			toggle = true
-			SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
+			e.GET(item.Path, func(c echo.Context) error {
+				for _, deviceId := range item.DeviceIds {
+					apiHeader := makeAPIHeader()
+					SwitchBotControl(apiHeader, deviceId, item.Type, "default", "command")
+				}
+				return c.String(http.StatusOK, fmt.Sprintf("Turn %s devices", item.Type))
+			})
 		}
-
-		return c.String(http.StatusOK, "Toggle switchbot bulb")
-	})
-
-	e.GET("/all/turnon", func(c echo.Context) error {
-		airConditionerId := "01-202210180121-38128280"
-		lightId := "01-202304012328-87495896"
-		deskLightId := "70041D7EEE6A"
-
-		apiHeader := makeAPIHeader()
-		SwitchBotControl(apiHeader, airConditionerId, "turnOn", "default", "command")
-		apiHeader = makeAPIHeader()
-		SwitchBotControl(apiHeader, lightId, "turnOn", "default", "command")
-		apiHeader = makeAPIHeader()
-		SwitchBotControl(apiHeader, deskLightId, "turnOn", "default", "command")
-
-		return c.String(http.StatusOK, "Turn on all devices")
-	})
-
-	e.GET("/all/turnoff", func(c echo.Context) error {
-		airConditionerId := "01-202210180121-38128280"
-		lightId := "01-202304012328-87495896"
-		deskLightId := "70041D7EEE6A"
-
-		apiHeader := makeAPIHeader()
-		SwitchBotControl(apiHeader, airConditionerId, "turnOff", "default", "command")
-		apiHeader = makeAPIHeader()
-		SwitchBotControl(apiHeader, lightId, "turnOff", "default", "command")
-		apiHeader = makeAPIHeader()
-		SwitchBotControl(apiHeader, deskLightId, "turnOff", "default", "command")
-
-		return c.String(http.StatusOK, "Turn off all devices")
-	})
+	}
 
 	e.Logger.Fatal(e.Start(":8080"))
-
-	/*
-
-		deviceId := "01-202304012328-87495896"
-
-		// turn on switchbot color bulb
-		apiHeader := makeAPIHeader()
-		SwitchBotControl(apiHeader, deviceId, "turnOn", "default", "command")
-
-		// turn off switchbot color bulb
-		apiHeader = makeAPIHeader()
-		SwitchBotControl(apiHeader, deviceId, "turnOff", "default", "command")
-	*/
 }
 
 func makeAPIHeader() map[string]string {
