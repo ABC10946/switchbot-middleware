@@ -42,24 +42,25 @@ switchbotconfiguration: |
       path: "/light/turnon"
       type: "turnOn"
       deviceIds:
-        - "01-202304012328-87495896"
+        - "01-202501131421-42935771"
     - name: "light-turnoff"
       path: "/light/turnoff"
       type: "turnOff"
       deviceIds:
-        - "01-202304012328-87495896"
+        - "01-202501131421-42935771"
     - name: "light-toggle"
       path: "/light/toggle"
       type: "toggle"
       deviceIds:
-        - "01-202304012328-87495896"
+        - "01-202501131421-42935771"
     - name: allon
       path: "/all/turnon"
       type: "turnOn"
       deviceIds:
-        - "01-202210180121-38128280"
-        - "01-202304012328-87495896"
         - "70041D7EEE6A"
+        - "B0E9FE52468C"
+        - "01-202501131423-10376968"
+        - "01-202501131421-42935771"
     - name: alloff
       path: "/all/turnoff"
       type: "turnOff"
@@ -71,4 +72,15 @@ switchbotconfiguration: |
       path: "/aircon/toggle"
       type: "toggle"
       deviceIds:
-        - "01-202210180121-38128280"
+        - "01-202501131423-10376968"
+    - name: desklight-turnon
+      path: "/desklight/turnon"
+      type: "turnOn"
+      deviceIds:
+        - "70041D7EEE6A"
+    - name: desklight-turnoff
+      path: "/desklight/turnoff"
+      type: "turnOff"
+      deviceIds:
+        - "70041D7EEE6A"
+
